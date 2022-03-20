@@ -1,0 +1,6 @@
+.*
+!.gitignore
+!docker/.env.dist
+vendor
+composer.lock
+/build

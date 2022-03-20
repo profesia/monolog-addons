@@ -1,0 +1,34 @@
+{
+  "name": "profesia/monolog-addons",
+  "description": "Collection of the Monolog addons",
+  "type": "library",
+  "authors": [
+    {
+      "name": "Matej Bádal",
+      "email": "matej.badal@profesia.sk"
+    }
+  ],
+  "require": {
+    "php": "~8.0",
+    "monolog/monolog": "^2.4"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.5",
+    "mockery/mockery": "^1.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "Profesia\\Monolog\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Profesia\\Monolog\\Test\\": "tests/"
+    }
+  },
+  "scripts": {
+    "test": "XDEBUG_MODE=coverage ./vendor/bin/phpunit",
+    "analyse": "./vendor/bin/phpstan analyse"
+  },
+  "license": "MIT"
+}
