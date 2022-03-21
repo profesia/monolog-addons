@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Profesia\Monolog\Test\Unit;
+namespace Profesia\Monolog\Test\Unit\Processor;
 
+use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Mockery\MockInterface;
 use Profesia\Monolog\Extra\CorrelationIdResolver;
 use Profesia\Monolog\Processor\CorrelationIdAppendingProcessor;
-use Mockery;
-use Mockery\MockInterface;
 
 class CorrelationIdAppendingProcessorTest extends MockeryTestCase
 {

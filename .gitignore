@@ -1,6 +1,7 @@
 .*
 !.gitignore
 !docker/.env.dist
+!/.github
 vendor
 composer.lock
 /build

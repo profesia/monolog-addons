@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 
-namespace Profesia\Monolog\Test\Integration;
+namespace Profesia\Monolog\Test\Integration\Processor;
 
 
 use PHPUnit\Framework\TestCase;
