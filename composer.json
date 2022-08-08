@@ -10,8 +10,7 @@
   ],
   "require": {
     "php": "~8.0",
-    "monolog/monolog": "^2.4",
-    "ext-apache": "*"
+    "monolog/monolog": "^2.4"
   },
   "require-dev": {
     "phpunit/phpunit": "^9.5",
