@@ -30,4 +30,20 @@ class CorrelationIdResolver
 
         return $this->generatedId;
     }
+
+    public function store(): void
+    {
+        $generatedId = $this->resolve();
+
+        putenv($this->correlationIdKey . "={$generatedId}");
+
+        $phpSapiName = php_sapi_name();
+
+        if (
+            is_string($phpSapiName)
+            && str_starts_with($phpSapiName, 'apache') === true
+        ) {
+            apache_setenv($this->correlationIdKey, $generatedId);
+        }
+    }
 }
