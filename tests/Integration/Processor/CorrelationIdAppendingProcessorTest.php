@@ -8,13 +8,15 @@ namespace Profesia\Monolog\Test\Integration\Processor;
 
 use PHPUnit\Framework\TestCase;
 use Profesia\Monolog\Extra\CorrelationIdResolver;
+use Profesia\Monolog\Extra\Uuid4Generator;
 use Profesia\Monolog\Processor\CorrelationIdAppendingProcessor;
 
 class CorrelationIdAppendingProcessorTest extends TestCase
 {
     public function testCanAppendAlreadyGeneratedIdToRecord(): void
     {
-        $resolver = new CorrelationIdResolver('test-key');
+        $generator = new Uuid4Generator();
+        $resolver = new CorrelationIdResolver($generator, 'test-key');
         $processor = new CorrelationIdAppendingProcessor(
             $resolver
         );
@@ -37,7 +39,8 @@ class CorrelationIdAppendingProcessorTest extends TestCase
 
     public function testCanAppendNewGeneratedIdToRecord(): void
     {
-        $resolver = new CorrelationIdResolver('test-key');
+        $generator = new Uuid4Generator();
+        $resolver = new CorrelationIdResolver($generator, 'test-key');
         $processor = new CorrelationIdAppendingProcessor(
             $resolver
         );

@@ -6,13 +6,13 @@ namespace Profesia\Monolog\Extra;
 
 class CorrelationIdResolver
 {
-    private string $correlationIdKey;
     private ?string $generatedId;
 
-    public function __construct(string $correlationIdKey)
-    {
-        $this->correlationIdKey = $correlationIdKey;
-        $this->generatedId      = null;
+    public function __construct(
+        private CorrelationIdGeneratorInterface $generator,
+        private string $correlationIdKey,
+    ) {
+        $this->generatedId = null;
     }
 
     public function resolve(): string
@@ -23,10 +23,10 @@ class CorrelationIdResolver
 
         $alreadyGeneratedCorrelationId = getenv($this->correlationIdKey);
         if ($alreadyGeneratedCorrelationId === '' || $alreadyGeneratedCorrelationId === false) {
-            $this->generatedId = uniqid();
-        } else {
-            $this->generatedId = $alreadyGeneratedCorrelationId;
+            $alreadyGeneratedCorrelationId = $this->generator->generate();
         }
+
+        $this->generatedId = $alreadyGeneratedCorrelationId;
 
         return $this->generatedId;
     }
