@@ -34,7 +34,6 @@ class IndexPrefixAppendingProcessor
 
         if (array_key_exists($channel, $this->channelToGroupMap)) {
             $indexSuffix = $this->channelToGroupMap[$channel];
-        } else {
         }
 
         $record['extra']['index_prefix'] = "{$this->vendorName}-{$indexSuffix}";
