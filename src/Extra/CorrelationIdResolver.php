@@ -11,13 +11,14 @@ class CorrelationIdResolver
     public function __construct(
         private CorrelationIdGeneratorInterface $generator,
         private string $correlationIdKey,
+        private bool $alwaysCheckEnv = false
     ) {
         $this->generatedId = null;
     }
 
     public function resolve(): string
     {
-        if ($this->generatedId !== null) {
+        if ($this->alwaysCheckEnv === false && $this->generatedId !== null) {
             return $this->generatedId;
         }
 
