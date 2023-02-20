@@ -18,7 +18,7 @@ class CorrelationIdAppendingProcessorTest extends TestCase
             new TestCorrelationIdResolver()
         );
 
-        $record      = $processor->__invoke(
+        $record = $processor->__invoke(
             []
         );
 
@@ -27,6 +27,29 @@ class CorrelationIdAppendingProcessorTest extends TestCase
             [
                 'extra' => [
                     'correlation_id' => TestCorrelationIdResolver::UUID,
+                ],
+            ],
+            $record
+        );
+    }
+
+    public function testCanOverrideCorrelationIdKey(): void
+    {
+        $key       = 'testing';
+        $processor = new CorrelationIdAppendingProcessor(
+            new TestCorrelationIdResolver(),
+            $key
+        );
+
+        $record = $processor->__invoke(
+            []
+        );
+
+
+        $this->assertEquals(
+            [
+                'extra' => [
+                    $key => TestCorrelationIdResolver::UUID,
                 ],
             ],
             $record
