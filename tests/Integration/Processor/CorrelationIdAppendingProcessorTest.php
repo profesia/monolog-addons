@@ -18,7 +18,7 @@ class CorrelationIdAppendingProcessorTest extends TestCase
         $generator = new Uuid4Generator();
         $resolver = new CorrelationIdResolver($generator, 'test-key');
         $processor = new CorrelationIdAppendingProcessor(
-            $resolver
+            $resolver,
         );
 
         $generatedId = $resolver->resolve();
@@ -54,6 +54,31 @@ class CorrelationIdAppendingProcessorTest extends TestCase
             [
                 'extra' => [
                     'correlation_id' => $resolver->resolve(),
+                ],
+            ],
+            $record
+        );
+    }
+
+    public function testCanOverrideStoreKey(): void
+    {
+        $storeKey = 'store-key';
+        $generator = new Uuid4Generator();
+        $resolver = new CorrelationIdResolver($generator, 'test-key');
+        $processor = new CorrelationIdAppendingProcessor(
+            $resolver,
+            $storeKey
+        );
+
+        $record      = $processor->__invoke(
+            []
+        );
+
+
+        $this->assertEquals(
+            [
+                'extra' => [
+                    $storeKey => $resolver->resolve(),
                 ],
             ],
             $record
