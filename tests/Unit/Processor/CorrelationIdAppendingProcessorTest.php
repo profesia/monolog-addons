@@ -7,7 +7,7 @@ namespace Profesia\Monolog\Test\Unit\Processor;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
-use Profesia\Monolog\Extra\CorrelationIdResolver;
+use Profesia\CorrelationId\Resolver\CorrelationIdResolverInterface;
 use Profesia\Monolog\Processor\CorrelationIdAppendingProcessor;
 
 class CorrelationIdAppendingProcessorTest extends MockeryTestCase
@@ -15,8 +15,8 @@ class CorrelationIdAppendingProcessorTest extends MockeryTestCase
     public function testCanAppendCorrelationIdToRecord(): void
     {
         $correlationId = 'test-id';
-        /** @var MockInterface|CorrelationIdResolver $resolver */
-        $resolver = Mockery::mock(CorrelationIdResolver::class);
+        /** @var MockInterface|CorrelationIdResolverInterface $resolver */
+        $resolver = Mockery::mock(CorrelationIdResolverInterface::class);
         $resolver
             ->shouldReceive('resolve')
             ->once()

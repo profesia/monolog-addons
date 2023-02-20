@@ -7,42 +7,15 @@ namespace Profesia\Monolog\Test\Integration\Processor;
 
 
 use PHPUnit\Framework\TestCase;
-use Profesia\Monolog\Extra\CorrelationIdResolver;
-use Profesia\Monolog\Extra\Uuid4Generator;
 use Profesia\Monolog\Processor\CorrelationIdAppendingProcessor;
+use Profesia\Monolog\Test\Assets\TestCorrelationIdResolver;
 
 class CorrelationIdAppendingProcessorTest extends TestCase
 {
     public function testCanAppendAlreadyGeneratedIdToRecord(): void
     {
-        $generator = new Uuid4Generator();
-        $resolver = new CorrelationIdResolver($generator, 'test-key');
         $processor = new CorrelationIdAppendingProcessor(
-            $resolver,
-        );
-
-        $generatedId = $resolver->resolve();
-        $record      = $processor->__invoke(
-            []
-        );
-
-
-        $this->assertEquals(
-            [
-                'extra' => [
-                    'correlation_id' => $generatedId,
-                ],
-            ],
-            $record
-        );
-    }
-
-    public function testCanAppendNewGeneratedIdToRecord(): void
-    {
-        $generator = new Uuid4Generator();
-        $resolver = new CorrelationIdResolver($generator, 'test-key');
-        $processor = new CorrelationIdAppendingProcessor(
-            $resolver
+            new TestCorrelationIdResolver()
         );
 
         $record      = $processor->__invoke(
@@ -53,32 +26,7 @@ class CorrelationIdAppendingProcessorTest extends TestCase
         $this->assertEquals(
             [
                 'extra' => [
-                    'correlation_id' => $resolver->resolve(),
-                ],
-            ],
-            $record
-        );
-    }
-
-    public function testCanOverrideStoreKey(): void
-    {
-        $storeKey = 'store-key';
-        $generator = new Uuid4Generator();
-        $resolver = new CorrelationIdResolver($generator, 'test-key');
-        $processor = new CorrelationIdAppendingProcessor(
-            $resolver,
-            $storeKey
-        );
-
-        $record      = $processor->__invoke(
-            []
-        );
-
-
-        $this->assertEquals(
-            [
-                'extra' => [
-                    $storeKey => $resolver->resolve(),
+                    'correlation_id' => TestCorrelationIdResolver::UUID,
                 ],
             ],
             $record
