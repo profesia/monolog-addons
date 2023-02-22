@@ -11,7 +11,7 @@
   "require": {
     "php": "~8.0",
     "monolog/monolog": "^2.0",
-    "profesia/correlation-id": "^0.9.0"
+    "profesia/correlation-id": "^1.0.0"
   },
   "require-dev": {
     "phpunit/phpunit": "^9.5",
