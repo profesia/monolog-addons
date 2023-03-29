@@ -8,6 +8,7 @@ class IndexPrefixAppendingProcessor
 {
     public const CHANNEL_UNKNOWN = 'unknown-channel';
 
+    private string $vendorName;
     /** @var string[] */
     private array $channelToGroupMap;
 
@@ -16,15 +17,16 @@ class IndexPrefixAppendingProcessor
      * @param string[][] $groupedChannels
      */
     public function __construct(
-        private string $vendorName,
+        string $vendorName,
         array $groupedChannels
-    )
-    {
+    ) {
         foreach ($groupedChannels as $group => $channels) {
             foreach ($channels as $channel) {
                 $this->channelToGroupMap[$channel] = $group;
             }
         }
+
+        $this->vendorName = $vendorName;
     }
 
     public function __invoke(array $record): array

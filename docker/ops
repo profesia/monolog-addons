@@ -28,22 +28,23 @@ COMPOSE="docker-compose"
 
 case "$1" in
   up)
-    ${COMPOSE} down --remove-orphans && ${COMPOSE} pull && ${COMPOSE} up -d
+    shift 1
+    ${COMPOSE} down --remove-orphans && ${COMPOSE} pull && ${COMPOSE} up "$@"
     ;;
   down)
     ${COMPOSE} down --remove-orphans
     ;;
   php)
     shift 1
-    ${COMPOSE} exec php bash -c "php $*"
+    ${COMPOSE} exec monolog_addons bash -c "php $*"
     ;;
   bash)
     shift 1
-    ${COMPOSE} exec php bash -c "$*"
+    ${COMPOSE} exec monolog_addons bash -c "$*"
     ;;
   container)
   	shift 1
-  	${COMPOSE} exec php "$@"
+  	${COMPOSE} exec monolog_addons "$@"
   	;;
   *)
     print_help

@@ -10,10 +10,13 @@ class TestCorrelationIdResolver implements CorrelationIdResolverInterface
 {
     public const UUID = 'daeca952-f4b1-49fa-b453-0277e58ba189';
 
+    private ?string $generatedValue;
+
     public function __construct(
-        private ?string $generatedValue = null
-    )
-    {}
+        ?string $generatedValue = null
+    ) {
+        $this->generatedValue = $generatedValue;
+    }
 
     public function resolve(): string
     {

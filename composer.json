@@ -9,13 +9,13 @@
     }
   ],
   "require": {
-    "php": "~8.0",
+    "php": ">=7.4",
     "monolog/monolog": "^2.0",
     "profesia/correlation-id": "^1.0.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "^9.5",
-    "mockery/mockery": "^1.5"
+    "mockery/mockery": "^1.5",
+    "pestphp/pest": "^1.22"
   },
   "autoload": {
     "psr-4": {
@@ -29,8 +29,14 @@
     "files": ["tests/mocks.php"]
   },
   "scripts": {
-    "test": "XDEBUG_MODE=coverage ./vendor/bin/phpunit",
+    "test": "XDEBUG_MODE=coverage ./vendor/bin/pest",
+    "coverage": "XDEBUG_MODE=coverage ./vendor/bin/pest --coverage",
     "analyse": "./vendor/bin/phpstan analyse"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  }
 }

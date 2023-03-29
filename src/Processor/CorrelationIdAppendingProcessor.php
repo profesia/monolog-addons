@@ -9,11 +9,15 @@ use Profesia\CorrelationId\Resolver\CorrelationIdResolverInterface;
 
 class CorrelationIdAppendingProcessor implements ProcessorInterface
 {
+    private CorrelationIdResolverInterface $resolver;
+    private string $storeKey;
+
     public function __construct(
-        private CorrelationIdResolverInterface $resolver,
-        private string $storeKey = 'correlation_id'
-    )
-    {
+        CorrelationIdResolverInterface $resolver,
+        ?string $storeKey = 'correlation_id'
+    ) {
+        $this->resolver = $resolver;
+        $this->storeKey = $storeKey;
     }
 
     public function __invoke(array $record): array
@@ -21,6 +25,5 @@ class CorrelationIdAppendingProcessor implements ProcessorInterface
         $record['extra'][$this->storeKey] = $this->resolver->resolve();
 
         return $record;
-
     }
 }

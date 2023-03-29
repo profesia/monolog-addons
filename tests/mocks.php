@@ -4,7 +4,13 @@ declare(strict_types=1);
 
 namespace Profesia\Monolog\Extra;
 
-function getenv(?string $name, bool $local_only = false): array|string|false {
+/**
+ * @param string|null $name
+ * @param bool        $local_only
+ *
+ * @return array|string|bool
+ */
+function getenv(?string $name, bool $local_only = false): ?string {
     return $name;
 }
 
@@ -17,7 +23,10 @@ function putenv(string $assignment): bool
     return true;
 }
 
-function php_sapi_name(): string|false {
+/**
+ * @return string|bool
+ */
+function php_sapi_name()  {
     return 'apache';
 }
 
