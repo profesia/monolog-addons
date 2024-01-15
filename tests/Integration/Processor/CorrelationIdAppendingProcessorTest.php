@@ -7,31 +7,42 @@ namespace Profesia\Monolog\Test\Integration\Processor;
 
 
 use Monolog\Level;
+use Monolog\Logger;
 use Monolog\LogRecord;
 use PHPUnit\Framework\TestCase;
 use Profesia\Monolog\Processor\CorrelationIdAppendingProcessor;
 use Profesia\Monolog\Test\Assets\TestCorrelationIdResolver;
+use Psr\Log\LogLevel;
 
 class CorrelationIdAppendingProcessorTest extends TestCase
 {
     public function provideDataForAlreadyGeneratedId(): array
     {
+        if (class_exists('Monolog\Level')) {
+            $logLevel = Level::Info;
+        } else {
+            $logLevel = LogLevel::INFO;
+        }
         //'message', 'context', 'level', 'channel', 'datetime', 'extra'
         $base = [
             'datetime' => new \DateTimeImmutable(),
             'context'  => [],
-            'level'    => Level::Info,
+            'level'    => $logLevel,
             'channel'  => 'test',
             'message'  => 'Test message'
         ];
-        return [
+
+        $returnArray = [
             'array already generated' => [
                 $base,
                 [
                     'correlation_id' => TestCorrelationIdResolver::UUID,
                 ],
             ],
-            'log record generated'    => [
+        ];
+
+        if (class_exists('Monolog\LogRecord')) {
+            $returnArray['log record generated'] = [
                 new LogRecord(
                     $base['datetime'],
                     $base['channel'],
@@ -43,8 +54,9 @@ class CorrelationIdAppendingProcessorTest extends TestCase
                 [
                     'correlation_id' => TestCorrelationIdResolver::UUID,
                 ]
-            ]
-        ];
+            ];
+        }
+        return $returnArray;
     }
 
     /**
@@ -64,7 +76,7 @@ class CorrelationIdAppendingProcessorTest extends TestCase
             $recordData
         );
 
-        if ($record instanceof LogRecord) {
+        if (Logger::API >= 3 && $record instanceof LogRecord) {
             $recordPartToCompare = $record->toArray()['extra'];
         } else {
             $recordPartToCompare = $record['extra'];
@@ -78,24 +90,32 @@ class CorrelationIdAppendingProcessorTest extends TestCase
 
     public function provideDataForOverrideCorrelationIdId(): array
     {
+        if (class_exists('Monolog\Level')) {
+            $logLevel = Level::Info;
+        } else {
+            $logLevel = LogLevel::INFO;
+        }
         $key = 'testing';
         //'message', 'context', 'level', 'channel', 'datetime', 'extra'
         $base = [
             'datetime' => new \DateTimeImmutable(),
             'context'  => [],
-            'level'    => Level::Info,
+            'level'    => $logLevel,
             'channel'  => 'test',
             'message'  => 'Test message'
         ];
 
-        return [
-            'array override generation'      => [
+        $returnArray = [
+            'array override generation' => [
                 $base,
                 [
                     $key => TestCorrelationIdResolver::UUID,
                 ],
-            ],
-            'log record override generation' => [
+            ]
+        ];
+
+        if (class_exists('Monolog\LogRecord')) {
+            $returnArray['log record override generation'] = [
                 new LogRecord(
                     $base['datetime'],
                     $base['channel'],
@@ -107,8 +127,10 @@ class CorrelationIdAppendingProcessorTest extends TestCase
                 [
                     $key => TestCorrelationIdResolver::UUID,
                 ],
-            ]
-        ];
+            ];
+        }
+
+        return $returnArray;
     }
 
     /**
@@ -130,7 +152,7 @@ class CorrelationIdAppendingProcessorTest extends TestCase
             $recordData
         );
 
-        if ($record instanceof LogRecord) {
+        if (Logger::API >= 3 && $record instanceof LogRecord) {
             $recordPartToCompare = $record->toArray()['extra'];
         } else {
             $recordPartToCompare = $record['extra'];
