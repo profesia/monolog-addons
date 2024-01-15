@@ -25,13 +25,13 @@ class CorrelationIdAppendingProcessorTest extends TestCase
             'message'  => 'Test message'
         ];
         return [
-            [
+            'array already generated' => [
                 $base,
                 [
                     'correlation_id' => TestCorrelationIdResolver::UUID,
                 ],
             ],
-            [
+            'log record generated'    => [
                 new LogRecord(
                     $base['datetime'],
                     $base['channel'],
@@ -40,12 +40,9 @@ class CorrelationIdAppendingProcessorTest extends TestCase
                     $base['context'],
                     []
                 ),
-                array_merge(
-                    $base,
-                    [
-                        'correlation_id' => TestCorrelationIdResolver::UUID,
-                    ]
-                )
+                [
+                    'correlation_id' => TestCorrelationIdResolver::UUID,
+                ]
             ]
         ];
     }
@@ -67,9 +64,15 @@ class CorrelationIdAppendingProcessorTest extends TestCase
             $recordData
         );
 
+        if ($record instanceof LogRecord) {
+            $recordPartToCompare = $record->toArray()['extra'];
+        } else {
+            $recordPartToCompare = $record['extra'];
+        }
+
         $this->assertEquals(
             $expected,
-            $record instanceof LogRecord ? $record->toArray() : $record
+            $recordPartToCompare
         );
     }
 
@@ -86,13 +89,13 @@ class CorrelationIdAppendingProcessorTest extends TestCase
         ];
 
         return [
-            [
+            'array override generation'      => [
                 $base,
                 [
                     $key => TestCorrelationIdResolver::UUID,
                 ],
             ],
-            [
+            'log record override generation' => [
                 new LogRecord(
                     $base['datetime'],
                     $base['channel'],
