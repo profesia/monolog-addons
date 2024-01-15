@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace Profesia\Monolog\Processor;
 
-class IndexPrefixAppendingProcessor
+use Monolog\Logger;
+use Monolog\LogRecord;
+use Monolog\Processor\ProcessorInterface;
+
+class IndexPrefixAppendingProcessor implements ProcessorInterface
 {
     public const CHANNEL_UNKNOWN = 'unknown-channel';
 
@@ -29,8 +33,12 @@ class IndexPrefixAppendingProcessor
         $this->vendorName = $vendorName;
     }
 
-    public function __invoke(array $record): array
+    public function __invoke($record): array
     {
+        if (Logger::API >= 3 && $record instanceof LogRecord) {
+            $record = $record->toArray();
+        }
+
         $channel     = (isset($record['channel']) && $record['channel'] !== '') ? $record['channel'] : self::CHANNEL_UNKNOWN;
         $indexSuffix = $channel;
 

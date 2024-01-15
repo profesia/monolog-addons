@@ -9,9 +9,10 @@ Install the latest version by running the command
 composer require profesia/monolog-addons
 ```
 ## Requirements
-- PHP 8.0+
+- PHP 7.4+
 ## Table of contents
 - [CorrelationIdAppendingProcessor](src/Processor/CorrelationIdAppendingProcessor.php)
+- [IndexPrefixAppendingProcessor](src/Processor/IndexPrefixAppendingProcessor.php)
 ## Author
 Matej Bádal - matej.badal@profesia.sk
 
