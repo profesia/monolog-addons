@@ -51,9 +51,16 @@ class CorrelationIdAppendingProcessorTest extends TestCase
                     $base['context'],
                     []
                 ),
-                [
-                    'correlation_id' => TestCorrelationIdResolver::UUID,
-                ]
+                new LogRecord(
+                    $base['datetime'],
+                    $base['channel'],
+                    $base['level'],
+                    $base['message'],
+                    $base['context'],
+                    [
+                        'correlation_id' => TestCorrelationIdResolver::UUID,
+                    ]
+                ),
             ];
         }
         return $returnArray;
@@ -61,12 +68,12 @@ class CorrelationIdAppendingProcessorTest extends TestCase
 
     /**
      * @param $recordData
-     * @param array $expected
+     * @param $expected
      * @return void
      *
      * @dataProvider provideDataForAlreadyGeneratedId
      */
-    public function testCanAppendAlreadyGeneratedIdToRecord($recordData, array $expected): void
+    public function testCanAppendAlreadyGeneratedIdToRecord($recordData, $expected): void
     {
         $processor = new CorrelationIdAppendingProcessor(
             new TestCorrelationIdResolver()
@@ -77,15 +84,16 @@ class CorrelationIdAppendingProcessorTest extends TestCase
         );
 
         if (Logger::API >= 3 && $record instanceof LogRecord) {
-            $recordPartToCompare = $record->toArray()['extra'];
+            $this->assertEquals(
+                $expected->extra,
+                $record->extra
+            );
         } else {
-            $recordPartToCompare = $record['extra'];
+            $this->assertEquals(
+                $expected,
+                $record['extra']
+            );
         }
-
-        $this->assertEquals(
-            $expected,
-            $recordPartToCompare
-        );
     }
 
     public function provideDataForOverrideCorrelationIdId(): array
@@ -124,9 +132,16 @@ class CorrelationIdAppendingProcessorTest extends TestCase
                     $base['context'],
                     []
                 ),
-                [
-                    $key => TestCorrelationIdResolver::UUID,
-                ],
+                new LogRecord(
+                    $base['datetime'],
+                    $base['channel'],
+                    $base['level'],
+                    $base['message'],
+                    $base['context'],
+                    [
+                        $key => TestCorrelationIdResolver::UUID,
+                    ]
+                ),
             ];
         }
 
@@ -135,12 +150,12 @@ class CorrelationIdAppendingProcessorTest extends TestCase
 
     /**
      * @param $recordData
-     * @param array $expected
+     * @param $expected
      * @return void
      *
      * @dataProvider provideDataForOverrideCorrelationIdId
      */
-    public function testCanOverrideCorrelationIdKey($recordData, array $expected): void
+    public function testCanOverrideCorrelationIdKey($recordData, $expected): void
     {
         $key       = 'testing';
         $processor = new CorrelationIdAppendingProcessor(
@@ -153,14 +168,15 @@ class CorrelationIdAppendingProcessorTest extends TestCase
         );
 
         if (Logger::API >= 3 && $record instanceof LogRecord) {
-            $recordPartToCompare = $record->toArray()['extra'];
+            $this->assertEquals(
+                $expected->extra,
+                $record->extra
+            );
         } else {
-            $recordPartToCompare = $record['extra'];
+            $this->assertEquals(
+                $expected,
+                $record['extra']
+            );
         }
-
-        $this->assertEquals(
-            $expected,
-            $recordPartToCompare
-        );
     }
 }

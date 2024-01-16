@@ -112,9 +112,16 @@ class IndexPrefixAppendingProcessorTest extends TestCase
                 [
                     'application' => ['app'],
                 ],
-                [
-                    'index_prefix' => "{$vendorName}-application",
-                ],
+                new LogRecord(
+                    $base['datetime'],
+                    'app',
+                    $base['level'],
+                    $base['message'],
+                    $base['context'],
+                    [
+                        'index_prefix' => "{$vendorName}-application"
+                    ]
+                ),
                 new LogRecord(
                     $base['datetime'],
                     'app',
@@ -130,9 +137,16 @@ class IndexPrefixAppendingProcessorTest extends TestCase
                 [
                     'application' => ['app1', 'app2'],
                 ],
-                [
-                    'index_prefix' => "{$vendorName}-application",
-                ],
+                new LogRecord(
+                    $base['datetime'],
+                    'app2',
+                    $base['level'],
+                    $base['message'],
+                    $base['context'],
+                    [
+                        'index_prefix' => "{$vendorName}-application"
+                    ]
+                ),
                 new LogRecord(
                     $base['datetime'],
                     'app2',
@@ -149,9 +163,16 @@ class IndexPrefixAppendingProcessorTest extends TestCase
                     'application' => ['app1', 'app2'],
                     'external'    => ['communication', 'elastic']
                 ],
-                [
-                    'index_prefix' => "{$vendorName}-external",
-                ],
+                new LogRecord(
+                    $base['datetime'],
+                    'communication',
+                    $base['level'],
+                    $base['message'],
+                    $base['context'],
+                    [
+                        'index_prefix' => "{$vendorName}-external"
+                    ]
+                ),
                 new LogRecord(
                     $base['datetime'],
                     'communication',
@@ -168,10 +189,16 @@ class IndexPrefixAppendingProcessorTest extends TestCase
                     'application' => ['app1', 'app2'],
                     'external'    => ['communication', 'elastic']
                 ],
-                [
-                    'index_prefix' => "{$vendorName}-non-existent",
-
-                ],
+                new LogRecord(
+                    $base['datetime'],
+                    'non-existent',
+                    $base['level'],
+                    $base['message'],
+                    $base['context'],
+                    [
+                        'index_prefix' => "{$vendorName}-non-existent"
+                    ]
+                ),
                 new LogRecord(
                     $base['datetime'],
                     'non-existent',
@@ -188,9 +215,16 @@ class IndexPrefixAppendingProcessorTest extends TestCase
                     'application' => ['app1', 'app2'],
                     'external'    => ['communication', 'elastic']
                 ],
-                [
-                    'index_prefix' => "{$vendorName}-" . IndexPrefixAppendingProcessor::CHANNEL_UNKNOWN,
-                ],
+                new LogRecord(
+                    $base['datetime'],
+                    '',
+                    $base['level'],
+                    $base['message'],
+                    $base['context'],
+                    [
+                        'index_prefix' => "{$vendorName}-" . IndexPrefixAppendingProcessor::CHANNEL_UNKNOWN,
+                    ]
+                ),
                 new LogRecord(
                     $base['datetime'],
                     '',
@@ -207,13 +241,13 @@ class IndexPrefixAppendingProcessorTest extends TestCase
     /**
      * @param string $vendorName
      * @param array $groupedChannels
-     * @param array $expectedRecordPart
+     * @param $expected
      * @param $recordData
      *
      * @return void
      * @dataProvider provideGroupedChannels
      */
-    public function testCanAppendChannelAsIndexPrefix(string $vendorName, array $groupedChannels, array $expectedRecordPart, $recordData): void
+    public function testCanAppendChannelAsIndexPrefix(string $vendorName, array $groupedChannels, $expected, $recordData): void
     {
         $processor = new IndexPrefixAppendingProcessor(
             $vendorName,
@@ -225,14 +259,15 @@ class IndexPrefixAppendingProcessorTest extends TestCase
         );
 
         if (Logger::API >= 3 && $record instanceof LogRecord) {
-            $recordPartToCompare = $record->toArray()['extra'];
+            $this->assertEquals(
+                $expected->extra,
+                $record->extra
+            );
         } else {
-            $recordPartToCompare = $record['extra'];
+            $this->assertEquals(
+                $expected,
+                $record['extra']
+            );
         }
-
-        $this->assertEquals(
-            $expectedRecordPart,
-            $recordPartToCompare
-        );
     }
 }

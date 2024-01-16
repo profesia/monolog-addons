@@ -12,24 +12,40 @@ use Profesia\CorrelationId\Resolver\CorrelationIdResolverInterface;
 class CorrelationIdAppendingProcessor implements ProcessorInterface
 {
     private CorrelationIdResolverInterface $resolver;
-    private string $storeKey;
+    private string                         $storeKey;
 
     public function __construct(
         CorrelationIdResolverInterface $resolver,
         ?string $storeKey = 'correlation_id'
-    ) {
+    )
+    {
         $this->resolver = $resolver;
         $this->storeKey = $storeKey;
     }
 
-    public function __invoke($record): array
+    public function __invoke($record)
     {
-        if (Logger::API >= 3 && $record instanceof LogRecord) {
-            $record = $record->toArray();
+        $isMonologVersion3 = (Logger::API >= 3 && $record instanceof LogRecord);
+        if ($isMonologVersion3 === true) {
+            $recordData = $record->toArray();
+        } else {
+            $recordData = $record;
         }
 
-        $record['extra'][$this->storeKey] = $this->resolver->resolve();
+        $recordData['extra'][$this->storeKey] = $this->resolver->resolve();
 
-        return $record;
+        if ($isMonologVersion3 === true) {
+            return new LogRecord(
+                $record->datetime,
+                $record->channel,
+                $record->level,
+                $record->message,
+                $record->context,
+                $recordData['extra'],
+                $record->formatted
+            );
+        } else {
+            return $recordData;
+        }
     }
 }

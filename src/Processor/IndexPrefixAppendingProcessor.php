@@ -33,10 +33,13 @@ class IndexPrefixAppendingProcessor implements ProcessorInterface
         $this->vendorName = $vendorName;
     }
 
-    public function __invoke($record): array
+    public function __invoke($record)
     {
-        if (Logger::API >= 3 && $record instanceof LogRecord) {
-            $record = $record->toArray();
+        $isMonologVersion3 = (Logger::API >= 3 && $record instanceof LogRecord);
+        if ($isMonologVersion3 === true) {
+            $recordData = $record->toArray();
+        } else {
+            $recordData = $record;
         }
 
         $channel     = (isset($record['channel']) && $record['channel'] !== '') ? $record['channel'] : self::CHANNEL_UNKNOWN;
@@ -46,8 +49,20 @@ class IndexPrefixAppendingProcessor implements ProcessorInterface
             $indexSuffix = $this->channelToGroupMap[$channel];
         }
 
-        $record['extra']['index_prefix'] = "{$this->vendorName}-{$indexSuffix}";
+        $recordData['extra']['index_prefix'] = "{$this->vendorName}-{$indexSuffix}";
 
-        return $record;
+        if ($isMonologVersion3 === true) {
+            return new LogRecord(
+                $record->datetime,
+                $record->channel,
+                $record->level,
+                $record->message,
+                $record->context,
+                $recordData['extra'],
+                $record->formatted
+            );
+        } else {
+            return $recordData;
+        }
     }
 }
